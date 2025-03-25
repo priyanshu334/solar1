@@ -1,6 +1,22 @@
-import React, { useState,} from 'react';
+import React, { useState } from 'react';
 import { Routes, Route, Link, useLocation } from 'react-router-dom';
-import { LayoutDashboard, Users, ShoppingBag, ClipboardList, Building2, Settings, Plus, Search, Edit, Trash2, ChevronDown, ChevronUp, Bell } from 'lucide-react';
+import { 
+  LayoutDashboard, 
+  Users, 
+  ShoppingBag, 
+  ClipboardList, 
+  Building2, 
+  Settings, 
+  Plus, 
+  Search, 
+  Edit, 
+  Trash2, 
+  ChevronDown, 
+  ChevronUp, 
+  Bell, 
+  Menu, 
+  X 
+} from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 // Mock data for demonstration
@@ -39,75 +55,125 @@ const revenueData = [
   { month: 'Jun', revenue: 900000 },
 ];
 
-
 const AdminPanel = () => {
-
-
   const location = useLocation();
   const [notifications] = useState([
     { id: 1, title: 'New Order', message: 'Order #1234 has been placed', time: '2 hours ago' },
     { id: 2, title: 'Maintenance Alert', message: 'System maintenance scheduled', time: '1 day ago' },
   ]);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
     <div className="flex h-screen bg-gray-100">
-      {/* Sidebar */}
-      <aside className="w-64 bg-white shadow-md">
-        <div className="p-4">
-          <h2 className="text-xl font-bold text-gray-800">Admin Panel</h2>
-        </div>
-        <nav className="mt-4">
-          <Link 
-            to="/admin" 
-            className={`flex items-center px-4 py-2 ${location.pathname === '/admin' ? 'bg-blue-50 text-blue-600' : 'text-gray-700'} hover:bg-gray-100`}
-          >
-            <LayoutDashboard className="h-5 w-5 mr-2" />
-            Dashboard
-          </Link>
-          <Link 
-            to="/admin/users" 
-            className={`flex items-center px-4 py-2 ${location.pathname === '/admin/users' ? 'bg-blue-50 text-blue-600' : 'text-gray-700'} hover:bg-gray-100`}
-          >
-            <Users className="h-5 w-5 mr-2" />
-            User Management
-          </Link>
-          <Link 
-            to="/admin/products" 
-            className={`flex items-center px-4 py-2 ${location.pathname === '/admin/products' ? 'bg-blue-50 text-blue-600' : 'text-gray-700'} hover:bg-gray-100`}
-          >
-            <ShoppingBag className="h-5 w-5 mr-2" />
-            Product Management
-          </Link>
-          <Link 
-            to="/admin/tasks" 
-            className={`flex items-center px-4 py-2 ${location.pathname === '/admin/tasks' ? 'bg-blue-50 text-blue-600' : 'text-gray-700'} hover:bg-gray-100`}
-          >
-            <ClipboardList className="h-5 w-5 mr-2" />
-            Task Management
-          </Link>
-          <Link 
-            to="/admin/departments" 
-            className={`flex items-center px-4 py-2 ${location.pathname === '/admin/departments' ? 'bg-blue-50 text-blue-600' : 'text-gray-700'} hover:bg-gray-100`}
-          >
-            <Building2 className="h-5 w-5 mr-2" />
-            Departments
-          </Link>
-          <Link 
-            to="/admin/settings" 
-            className={`flex items-center px-4 py-2 ${location.pathname === '/admin/settings' ? 'bg-blue-50 text-blue-600' : 'text-gray-700'} hover:bg-gray-100`}
-          >
-            <Settings className="h-5 w-5 mr-2" />
-            Settings
-          </Link>
-        </nav>
-      </aside>
+      {/* Mobile sidebar toggle */}
+      <button
+        className="md:hidden fixed top-4 left-4 z-50 p-2 rounded-md bg-white shadow-md"
+        onClick={() => setSidebarOpen(!sidebarOpen)}
+      >
+        {sidebarOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+      </button>
 
+     {/* Responsive Sidebar Component */}
+<aside 
+  className={`
+    fixed md:static inset-y-0 left-0 z-40 w-64 bg-white shadow-md 
+    transform transition-transform duration-300 ease-in-out
+    ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} 
+    md:translate-x-0
+  `}
+  aria-label="Admin Sidebar"
+>
+  {/* Header with Optional Close Button on Mobile */}
+  <div className="flex items-center justify-between p-4">
+    <h2 className="text-xl font-bold text-gray-800">Admin Panel</h2>
+    <button 
+      className="md:hidden text-gray-600 hover:text-gray-900"
+      onClick={() => setSidebarOpen(false)}
+      aria-label="Close Sidebar"
+    >
+      <X className="h-6 w-6" />
+    </button>
+  </div>
+
+  {/* Navigation Links */}
+  <nav className="mt-4">
+    {[
+      { 
+        to: "/admin", 
+        icon: LayoutDashboard, 
+        label: "Dashboard" 
+      },
+      { 
+        to: "/admin/users", 
+        icon: Users, 
+        label: "User Management" 
+      },
+      { 
+        to: "/admin/products", 
+        icon: ShoppingBag, 
+        label: "Product Management" 
+      },
+      { 
+        to: "/admin/tasks", 
+        icon: ClipboardList, 
+        label: "Task Management" 
+      },
+      { 
+        to: "/admin/departments", 
+        icon: Building2, 
+        label: "Departments" 
+      },
+      { 
+        to: "/admin/settings", 
+        icon: Settings, 
+        label: "Settings" 
+      }
+    ].map(({ to, icon: Icon, label }) => (
+      <Link
+        key={to}
+        to={to}
+        className={`
+          flex items-center px-4 py-2 
+          ${location.pathname === to ? 'bg-blue-50 text-blue-600' : 'text-gray-700'} 
+          hover:bg-gray-100 
+          transition-colors duration-200
+          group
+        `}
+        onClick={() => setSidebarOpen(false)}
+        aria-current={location.pathname === to ? 'page' : undefined}
+      >
+        <Icon 
+          className={`
+            h-5 w-5 mr-2 
+            ${location.pathname === to ? 'text-blue-600' : 'text-gray-500'}
+            group-hover:text-blue-500
+            transition-colors duration-200
+          `}
+        />
+        {label}
+      </Link>
+    ))}
+  </nav>
+</aside>
+
+{/* Mobile Overlay */}
+{sidebarOpen && (
+  <div 
+    className="
+      fixed inset-0 bg-black bg-opacity-50 z-30 
+      md:hidden 
+      animate-fade-in
+    "
+    onClick={() => setSidebarOpen(false)}
+    aria-hidden="true"
+  />
+)}
       {/* Main Content */}
       <main className="flex-1 overflow-auto">
-        <div className="p-8">
+        <div className="p-4 md:p-8">
           {/* Notification Bar */}
-          <div className="mb-8 flex justify-between items-center">
-            <h1 className="text-2xl font-bold text-gray-800">Admin Dashboard</h1>
+          <div className="mb-6 md:mb-8 flex justify-between items-center">
+            <h1 className="text-xl md:text-2xl font-bold text-gray-800">Admin Dashboard</h1>
             <div className="relative">
               <Bell className="h-6 w-6 text-gray-600 cursor-pointer" />
               <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center">
@@ -133,27 +199,27 @@ const AdminPanel = () => {
 const AdminDashboard = () => {
   return (
     <div>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <div className="bg-white p-6 rounded-lg shadow">
-          <h3 className="text-lg font-semibold mb-2">Total Projects</h3>
-          <p className="text-3xl font-bold text-blue-600">156</p>
-          <p className="text-sm text-gray-500 mt-2">12% increase from last month</p>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 mb-6 md:mb-8">
+        <div className="bg-white p-4 md:p-6 rounded-lg shadow">
+          <h3 className="text-base md:text-lg font-semibold mb-2">Total Projects</h3>
+          <p className="text-2xl md:text-3xl font-bold text-blue-600">156</p>
+          <p className="text-xs md:text-sm text-gray-500 mt-2">12% increase from last month</p>
         </div>
-        <div className="bg-white p-6 rounded-lg shadow">
-          <h3 className="text-lg font-semibold mb-2">Active Plants</h3>
-          <p className="text-3xl font-bold text-green-600">89</p>
-          <p className="text-sm text-gray-500 mt-2">5 new this week</p>
+        <div className="bg-white p-4 md:p-6 rounded-lg shadow">
+          <h3 className="text-base md:text-lg font-semibold mb-2">Active Plants</h3>
+          <p className="text-2xl md:text-3xl font-bold text-green-600">89</p>
+          <p className="text-xs md:text-sm text-gray-500 mt-2">5 new this week</p>
         </div>
-        <div className="bg-white p-6 rounded-lg shadow">
-          <h3 className="text-lg font-semibold mb-2">Total Revenue</h3>
-          <p className="text-3xl font-bold text-yellow-600">₹4.2M</p>
-          <p className="text-sm text-gray-500 mt-2">18% increase from last quarter</p>
+        <div className="bg-white p-4 md:p-6 rounded-lg shadow">
+          <h3 className="text-base md:text-lg font-semibold mb-2">Total Revenue</h3>
+          <p className="text-2xl md:text-3xl font-bold text-yellow-600">₹4.2M</p>
+          <p className="text-xs md:text-sm text-gray-500 mt-2">18% increase from last quarter</p>
         </div>
       </div>
 
-      <div className="bg-white p-6 rounded-lg shadow mb-8">
-        <h3 className="text-lg font-semibold mb-4">Revenue Overview</h3>
-        <div className="h-80">
+      <div className="bg-white p-4 md:p-6 rounded-lg shadow mb-6 md:mb-8">
+        <h3 className="text-base md:text-lg font-semibold mb-4">Revenue Overview</h3>
+        <div className="h-64 md:h-80">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={revenueData}>
               <CartesianGrid strokeDasharray="3 3" />
@@ -166,56 +232,56 @@ const AdminDashboard = () => {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
         <div className="bg-white rounded-lg shadow">
-          <div className="p-4 border-b">
-            <h3 className="text-lg font-semibold">Recent Activities</h3>
+          <div className="p-3 md:p-4 border-b">
+            <h3 className="text-base md:text-lg font-semibold">Recent Activities</h3>
           </div>
-          <div className="p-4 border-b">
-            <p className="text-gray-600">New user registered: Alice Brown</p>
-            <p className="text-sm text-gray-400">2 hours ago</p>
+          <div className="p-3 md:p-4 border-b">
+            <p className="text-sm md:text-base text-gray-600">New user registered: Alice Brown</p>
+            <p className="text-xs md:text-sm text-gray-400">2 hours ago</p>
           </div>
-          <div className="p-4 border-b">
-            <p className="text-gray-600">Order #1234 completed</p>
-            <p className="text-sm text-gray-400">1 day ago</p>
+          <div className="p-3 md:p-4 border-b">
+            <p className="text-sm md:text-base text-gray-600">Order #1234 completed</p>
+            <p className="text-xs md:text-sm text-gray-400">1 day ago</p>
           </div>
-          <div className="p-4">
-            <p className="text-gray-600">System maintenance performed</p>
-            <p className="text-sm text-gray-400">2 days ago</p>
+          <div className="p-3 md:p-4">
+            <p className="text-sm md:text-base text-gray-600">System maintenance performed</p>
+            <p className="text-xs md:text-sm text-gray-400">2 days ago</p>
           </div>
         </div>
 
         <div className="bg-white rounded-lg shadow">
-          <div className="p-4 border-b">
-            <h3 className="text-lg font-semibold">Quick Actions</h3>
+          <div className="p-3 md:p-4 border-b">
+            <h3 className="text-base md:text-lg font-semibold">Quick Actions</h3>
           </div>
-          <div className="p-4 grid grid-cols-2 gap-4">
+          <div className="p-3 md:p-4 grid grid-cols-2 gap-3 md:gap-4">
             <Link 
               to="/admin/users" 
-              className="p-4 border rounded-lg text-center hover:bg-blue-50 hover:text-blue-600"
+              className="p-3 md:p-4 border rounded-lg text-center hover:bg-blue-50 hover:text-blue-600 text-sm md:text-base"
             >
-              <Users className="h-6 w-6 mx-auto mb-2" />
+              <Users className="h-5 md:h-6 w-5 md:w-6 mx-auto mb-1 md:mb-2" />
               Add User
             </Link>
             <Link 
               to="/admin/products" 
-              className="p-4 border rounded-lg text-center hover:bg-blue-50 hover:text-blue-600"
+              className="p-3 md:p-4 border rounded-lg text-center hover:bg-blue-50 hover:text-blue-600 text-sm md:text-base"
             >
-              <ShoppingBag className="h-6 w-6 mx-auto mb-2" />
+              <ShoppingBag className="h-5 md:h-6 w-5 md:w-6 mx-auto mb-1 md:mb-2" />
               Add Product
             </Link>
             <Link 
               to="/admin/tasks" 
-              className="p-4 border rounded-lg text-center hover:bg-blue-50 hover:text-blue-600"
+              className="p-3 md:p-4 border rounded-lg text-center hover:bg-blue-50 hover:text-blue-600 text-sm md:text-base"
             >
-              <ClipboardList className="h-6 w-6 mx-auto mb-2" />
+              <ClipboardList className="h-5 md:h-6 w-5 md:w-6 mx-auto mb-1 md:mb-2" />
               Create Task
             </Link>
             <Link 
               to="/admin/departments" 
-              className="p-4 border rounded-lg text-center hover:bg-blue-50 hover:text-blue-600"
+              className="p-3 md:p-4 border rounded-lg text-center hover:bg-blue-50 hover:text-blue-600 text-sm md:text-base"
             >
-              <Building2 className="h-6 w-6 mx-auto mb-2" />
+              <Building2 className="h-5 md:h-6 w-5 md:w-6 mx-auto mb-1 md:mb-2" />
               Add Department
             </Link>
           </div>
@@ -251,7 +317,6 @@ const UserManagement = () => {
     setSortConfig({ key, direction });
   };
 
-
   const sortedUsers = [...users].sort((a, b) => {
     if (a[sortConfig.key] < b[sortConfig.key]) {
       return sortConfig.direction === 'ascending' ? -1 : 1;
@@ -280,46 +345,46 @@ const UserManagement = () => {
 
   return (
     <div className="bg-white rounded-lg shadow">
-      <div className="p-6">
-        <div className="flex justify-between items-center mb-6">
+      <div className="p-4 md:p-6">
+        <div className="flex flex-col md:flex-row md:justify-between md:items-center mb-4 md:mb-6 gap-4">
           <h2 className="text-xl font-semibold">User Management</h2>
           <button
             onClick={() => setShowAddUser(true)}
-            className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 flex items-center"
+            className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 flex items-center justify-center"
           >
             <Plus className="h-4 w-4 mr-1" />
-            Add User
+            <span className="text-sm md:text-base">Add User</span>
           </button>
         </div>
 
         {showAddUser && (
-          <div className="mb-6 p-4 border rounded-lg">
-            <h3 className="text-lg font-medium mb-4">Add New User</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+          <div className="mb-4 md:mb-6 p-3 md:p-4 border rounded-lg">
+            <h3 className="text-base md:text-lg font-medium mb-3 md:mb-4">Add New User</h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4 mb-3 md:mb-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Name</label>
+                <label className="block text-xs md:text-sm font-medium text-gray-700 mb-1">Name</label>
                 <input
                   type="text"
                   value={newUser.name}
                   onChange={(e) => setNewUser({...newUser, name: e.target.value})}
-                  className="w-full p-2 border rounded-md"
+                  className="w-full p-2 text-sm md:text-base border rounded-md"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                <label className="block text-xs md:text-sm font-medium text-gray-700 mb-1">Email</label>
                 <input
                   type="email"
                   value={newUser.email}
                   onChange={(e) => setNewUser({...newUser, email: e.target.value})}
-                  className="w-full p-2 border rounded-md"
+                  className="w-full p-2 text-sm md:text-base border rounded-md"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Role</label>
+                <label className="block text-xs md:text-sm font-medium text-gray-700 mb-1">Role</label>
                 <select
                   value={newUser.role}
                   onChange={(e) => setNewUser({...newUser, role: e.target.value})}
-                  className="w-full p-2 border rounded-md"
+                  className="w-full p-2 text-sm md:text-base border rounded-md"
                 >
                   <option value="User">User</option>
                   <option value="Manager">Manager</option>
@@ -327,11 +392,11 @@ const UserManagement = () => {
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
+                <label className="block text-xs md:text-sm font-medium text-gray-700 mb-1">Status</label>
                 <select
                   value={newUser.status}
                   onChange={(e) => setNewUser({...newUser, status: e.target.value})}
-                  className="w-full p-2 border rounded-md"
+                  className="w-full p-2 text-sm md:text-base border rounded-md"
                 >
                   <option value="Active">Active</option>
                   <option value="Inactive">Inactive</option>
@@ -341,13 +406,13 @@ const UserManagement = () => {
             <div className="flex justify-end space-x-2">
               <button
                 onClick={() => setShowAddUser(false)}
-                className="px-4 py-2 border rounded-md hover:bg-gray-100"
+                className="px-3 md:px-4 py-1 md:py-2 text-sm md:text-base border rounded-md hover:bg-gray-100"
               >
                 Cancel
               </button>
               <button
                 onClick={handleAddUser}
-                className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
+                className="bg-blue-600 text-white px-3 md:px-4 py-1 md:py-2 text-sm md:text-base rounded-md hover:bg-blue-700"
                 disabled={!newUser.name || !newUser.email}
               >
                 Save User
@@ -356,108 +421,108 @@ const UserManagement = () => {
           </div>
         )}
 
-        <div className="mb-4 flex justify-between items-center">
-          <div className="relative w-64">
+        <div className="mb-3 md:mb-4">
+          <div className="relative w-full md:w-64">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
             <input
               type="text"
               placeholder="Search users..."
               value={searchTerm}
               onChange={handleSearch}
-              className="pl-10 pr-4 py-2 w-full border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="pl-10 pr-4 py-2 w-full text-sm md:text-base border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
         </div>
 
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">
-            <thead>
+            <thead className="bg-gray-50">
               <tr>
                 <th 
-                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
+                  className="px-3 md:px-6 py-2 md:py-3 text-left text-xs md:text-sm font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
                   onClick={() => handleSort('name')}
                 >
                   <div className="flex items-center">
                     Name
                     {sortConfig.key === 'name' && (
                       sortConfig.direction === 'ascending' ? 
-                      <ChevronUp className="ml-1 h-4 w-4" /> : 
-                      <ChevronDown className="ml-1 h-4 w-4" />
+                      <ChevronUp className="ml-1 h-3 md:h-4 w-3 md:w-4" /> : 
+                      <ChevronDown className="ml-1 h-3 md:h-4 w-3 md:w-4" />
                     )}
                   </div>
                 </th>
                 <th 
-                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
+                  className="px-3 md:px-6 py-2 md:py-3 text-left text-xs md:text-sm font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
                   onClick={() => handleSort('email')}
                 >
                   <div className="flex items-center">
                     Email
                     {sortConfig.key === 'email' && (
                       sortConfig.direction === 'ascending' ? 
-                      <ChevronUp className="ml-1 h-4 w-4" /> : 
-                      <ChevronDown className="ml-1 h-4 w-4" />
+                      <ChevronUp className="ml-1 h-3 md:h-4 w-3 md:w-4" /> : 
+                      <ChevronDown className="ml-1 h-3 md:h-4 w-3 md:w-4" />
                     )}
                   </div>
                 </th>
                 <th 
-                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
+                  className="px-3 md:px-6 py-2 md:py-3 text-left text-xs md:text-sm font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
                   onClick={() => handleSort('role')}
                 >
                   <div className="flex items-center">
                     Role
                     {sortConfig.key === 'role' && (
                       sortConfig.direction === 'ascending' ? 
-                      <ChevronUp className="ml-1 h-4 w-4" /> : 
-                      <ChevronDown className="ml-1 h-4 w-4" />
+                      <ChevronUp className="ml-1 h-3 md:h-4 w-3 md:w-4" /> : 
+                      <ChevronDown className="ml-1 h-3 md:h-4 w-3 md:w-4" />
                     )}
                   </div>
                 </th>
                 <th 
-                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
+                  className="px-3 md:px-6 py-2 md:py-3 text-left text-xs md:text-sm font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
                   onClick={() => handleSort('status')}
                 >
                   <div className="flex items-center">
                     Status
                     {sortConfig.key === 'status' && (
                       sortConfig.direction === 'ascending' ? 
-                      <ChevronUp className="ml-1 h-4 w-4" /> : 
-                      <ChevronDown className="ml-1 h-4 w-4" />
+                      <ChevronUp className="ml-1 h-3 md:h-4 w-3 md:w-4" /> : 
+                      <ChevronDown className="ml-1 h-3 md:h-4 w-3 md:w-4" />
                     )}
                   </div>
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-3 md:px-6 py-2 md:py-3 text-left text-xs md:text-sm font-medium text-gray-500 uppercase tracking-wider">
                   Actions
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-200">
+            <tbody className="bg-white divide-y divide-gray-200">
               {filteredUsers.map((user) => (
                 <tr key={user.id}>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                  <td className="px-3 md:px-6 py-3 md:py-4 whitespace-nowrap text-xs md:text-sm font-medium text-gray-900">
                     {user.name}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <td className="px-3 md:px-6 py-3 md:py-4 whitespace-nowrap text-xs md:text-sm text-gray-500">
                     {user.email}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <td className="px-3 md:px-6 py-3 md:py-4 whitespace-nowrap text-xs md:text-sm text-gray-500">
                     {user.role}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
+                  <td className="px-3 md:px-6 py-3 md:py-4 whitespace-nowrap">
                     <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
                       user.status === 'Active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
                     }`}>
                       {user.status}
                     </span>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    <button className="text-blue-600 hover:text-blue-900 mr-3">
-                      <Edit className="h-4 w-4" />
+                  <td className="px-3 md:px-6 py-3 md:py-4 whitespace-nowrap text-xs md:text-sm text-gray-500">
+                    <button className="text-blue-600 hover:text-blue-900 mr-2 md:mr-3">
+                      <Edit className="h-3 md:h-4 w-3 md:w-4" />
                     </button>
                     <button 
                       className="text-red-600 hover:text-red-900"
                       onClick={() => handleDeleteUser(user.id)}
                     >
-                      <Trash2 className="h-4 w-4" />
+                      <Trash2 className="h-3 md:h-4 w-3 md:w-4" />
                     </button>
                   </td>
                 </tr>
@@ -507,69 +572,69 @@ const ProductManagement = () => {
 
   return (
     <div className="bg-white rounded-lg shadow">
-      <div className="p-6">
-        <div className="flex justify-between items-center mb-6">
+      <div className="p-4 md:p-6">
+        <div className="flex flex-col md:flex-row md:justify-between md:items-center mb-4 md:mb-6 gap-4">
           <h2 className="text-xl font-semibold">Product Management</h2>
           <button
             onClick={() => setShowAddProduct(true)}
-            className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 flex items-center"
+            className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 flex items-center justify-center"
           >
             <Plus className="h-4 w-4 mr-1" />
-            Add Product
+            <span className="text-sm md:text-base">Add Product</span>
           </button>
         </div>
 
         {showAddProduct && (
-          <div className="mb-6 p-4 border rounded-lg">
-            <h3 className="text-lg font-medium mb-4">Add New Product</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+          <div className="mb-4 md:mb-6 p-3 md:p-4 border rounded-lg">
+            <h3 className="text-base md:text-lg font-medium mb-3 md:mb-4">Add New Product</h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4 mb-3 md:mb-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Name</label>
+                <label className="block text-xs md:text-sm font-medium text-gray-700 mb-1">Name</label>
                 <input
                   type="text"
                   value={newProduct.name}
                   onChange={(e) => setNewProduct({...newProduct, name: e.target.value})}
-                  className="w-full p-2 border rounded-md"
+                  className="w-full p-2 text-sm md:text-base border rounded-md"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
+                <label className="block text-xs md:text-sm font-medium text-gray-700 mb-1">Category</label>
                 <input
                   type="text"
                   value={newProduct.category}
                   onChange={(e) => setNewProduct({...newProduct, category: e.target.value})}
-                  className="w-full p-2 border rounded-md"
+                  className="w-full p-2 text-sm md:text-base border rounded-md"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Price</label>
+                <label className="block text-xs md:text-sm font-medium text-gray-700 mb-1">Price</label>
                 <input
                   type="text"
                   value={newProduct.price}
                   onChange={(e) => setNewProduct({...newProduct, price: e.target.value})}
-                  className="w-full p-2 border rounded-md"
+                  className="w-full p-2 text-sm md:text-base border rounded-md"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Stock</label>
+                <label className="block text-xs md:text-sm font-medium text-gray-700 mb-1">Stock</label>
                 <input
                   type="number"
                   value={newProduct.stock}
                   onChange={(e) => setNewProduct({...newProduct, stock: e.target.value})}
-                  className="w-full p-2 border rounded-md"
+                  className="w-full p-2 text-sm md:text-base border rounded-md"
                 />
               </div>
             </div>
             <div className="flex justify-end space-x-2">
               <button
                 onClick={() => setShowAddProduct(false)}
-                className="px-4 py-2 border rounded-md hover:bg-gray-100"
+                className="px-3 md:px-4 py-1 md:py-2 text-sm md:text-base border rounded-md hover:bg-gray-100"
               >
                 Cancel
               </button>
               <button
                 onClick={handleAddProduct}
-                className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
+                className="bg-blue-600 text-white px-3 md:px-4 py-1 md:py-2 text-sm md:text-base rounded-md hover:bg-blue-700"
                 disabled={!newProduct.name || !newProduct.category || !newProduct.price || !newProduct.stock}
               >
                 Save Product
@@ -578,64 +643,64 @@ const ProductManagement = () => {
           </div>
         )}
 
-        <div className="mb-4 flex justify-between items-center">
-          <div className="relative w-64">
+        <div className="mb-3 md:mb-4">
+          <div className="relative w-full md:w-64">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
             <input
               type="text"
               placeholder="Search products..."
               value={searchTerm}
               onChange={handleSearch}
-              className="pl-10 pr-4 py-2 w-full border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="pl-10 pr-4 py-2 w-full text-sm md:text-base border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
         </div>
 
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">
-            <thead>
+            <thead className="bg-gray-50">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-3 md:px-6 py-2 md:py-3 text-left text-xs md:text-sm font-medium text-gray-500 uppercase tracking-wider">
                   Name
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-3 md:px-6 py-2 md:py-3 text-left text-xs md:text-sm font-medium text-gray-500 uppercase tracking-wider">
                   Category
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-3 md:px-6 py-2 md:py-3 text-left text-xs md:text-sm font-medium text-gray-500 uppercase tracking-wider">
                   Price
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-3 md:px-6 py-2 md:py-3 text-left text-xs md:text-sm font-medium text-gray-500 uppercase tracking-wider">
                   Stock
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-3 md:px-6 py-2 md:py-3 text-left text-xs md:text-sm font-medium text-gray-500 uppercase tracking-wider">
                   Actions
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-200">
+            <tbody className="bg-white divide-y divide-gray-200">
               {filteredProducts.map((product) => (
                 <tr key={product.id}>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                  <td className="px-3 md:px-6 py-3 md:py-4 whitespace-nowrap text-xs md:text-sm font-medium text-gray-900">
                     {product.name}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <td className="px-3 md:px-6 py-3 md:py-4 whitespace-nowrap text-xs md:text-sm text-gray-500">
                     {product.category}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <td className="px-3 md:px-6 py-3 md:py-4 whitespace-nowrap text-xs md:text-sm text-gray-500">
                     {product.price}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <td className="px-3 md:px-6 py-3 md:py-4 whitespace-nowrap text-xs md:text-sm text-gray-500">
                     {product.stock}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    <button className="text-blue-600 hover:text-blue-900 mr-3">
-                      <Edit className="h-4 w-4" />
+                  <td className="px-3 md:px-6 py-3 md:py-4 whitespace-nowrap text-xs md:text-sm text-gray-500">
+                    <button className="text-blue-600 hover:text-blue-900 mr-2 md:mr-3">
+                      <Edit className="h-3 md:h-4 w-3 md:w-4" />
                     </button>
                     <button 
                       className="text-red-600 hover:text-red-900"
                       onClick={() => handleDeleteProduct(product.id)}
                     >
-                      <Trash2 className="h-4 w-4" />
+                      <Trash2 className="h-3 md:h-4 w-3 md:w-4" />
                     </button>
                   </td>
                 </tr>
@@ -680,37 +745,37 @@ const TaskManagement = () => {
 
   return (
     <div className="bg-white rounded-lg shadow">
-      <div className="p-6">
-        <div className="flex justify-between items-center mb-6">
+      <div className="p-4 md:p-6">
+        <div className="flex flex-col md:flex-row md:justify-between md:items-center mb-4 md:mb-6 gap-4">
           <h2 className="text-xl font-semibold">Task Management</h2>
           <button
             onClick={() => setShowAddTask(true)}
-            className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 flex items-center"
+            className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 flex items-center justify-center"
           >
             <Plus className="h-4 w-4 mr-1" />
-            Add Task
+            <span className="text-sm md:text-base">Add Task</span>
           </button>
         </div>
 
         {showAddTask && (
-          <div className="mb-6 p-4 border rounded-lg">
-            <h3 className="text-lg font-medium mb-4">Add New Task</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+          <div className="mb-4 md:mb-6 p-3 md:p-4 border rounded-lg">
+            <h3 className="text-base md:text-lg font-medium mb-3 md:mb-4">Add New Task</h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4 mb-3 md:mb-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Title</label>
+                <label className="block text-xs md:text-sm font-medium text-gray-700 mb-1">Title</label>
                 <input
                   type="text"
                   value={newTask.title}
                   onChange={(e) => setNewTask({...newTask, title: e.target.value})}
-                  className="w-full p-2 border rounded-md"
+                  className="w-full p-2 text-sm md:text-base border rounded-md"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Assignee</label>
+                <label className="block text-xs md:text-sm font-medium text-gray-700 mb-1">Assignee</label>
                 <select
                   value={newTask.assignee}
                   onChange={(e) => setNewTask({...newTask, assignee: e.target.value})}
-                  className="w-full p-2 border rounded-md"
+                  className="w-full p-2 text-sm md:text-base border rounded-md"
                 >
                   <option value="">Select Assignee</option>
                   {usersData.map(user => (
@@ -719,20 +784,20 @@ const TaskManagement = () => {
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Due Date</label>
+                <label className="block text-xs md:text-sm font-medium text-gray-700 mb-1">Due Date</label>
                 <input
                   type="date"
                   value={newTask.dueDate}
                   onChange={(e) => setNewTask({...newTask, dueDate: e.target.value})}
-                  className="w-full p-2 border rounded-md"
+                  className="w-full p-2 text-sm md:text-base border rounded-md"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
+                <label className="block text-xs md:text-sm font-medium text-gray-700 mb-1">Status</label>
                 <select
                   value={newTask.status}
                   onChange={(e) => setNewTask({...newTask, status: e.target.value})}
-                  className="w-full p-2 border rounded-md"
+                  className="w-full p-2 text-sm md:text-base border rounded-md"
                 >
                   <option value="Pending">Pending</option>
                   <option value="In Progress">In Progress</option>
@@ -743,13 +808,13 @@ const TaskManagement = () => {
             <div className="flex justify-end space-x-2">
               <button
                 onClick={() => setShowAddTask(false)}
-                className="px-4 py-2 border rounded-md hover:bg-gray-100"
+                className="px-3 md:px-4 py-1 md:py-2 text-sm md:text-base border rounded-md hover:bg-gray-100"
               >
                 Cancel
               </button>
               <button
                 onClick={handleAddTask}
-                className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
+                className="bg-blue-600 text-white px-3 md:px-4 py-1 md:py-2 text-sm md:text-base rounded-md hover:bg-blue-700"
                 disabled={!newTask.title || !newTask.assignee || !newTask.dueDate}
               >
                 Save Task
@@ -760,38 +825,38 @@ const TaskManagement = () => {
 
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">
-            <thead>
+            <thead className="bg-gray-50">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-3 md:px-6 py-2 md:py-3 text-left text-xs md:text-sm font-medium text-gray-500 uppercase tracking-wider">
                   Title
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-3 md:px-6 py-2 md:py-3 text-left text-xs md:text-sm font-medium text-gray-500 uppercase tracking-wider">
                   Assignee
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-3 md:px-6 py-2 md:py-3 text-left text-xs md:text-sm font-medium text-gray-500 uppercase tracking-wider">
                   Due Date
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-3 md:px-6 py-2 md:py-3 text-left text-xs md:text-sm font-medium text-gray-500 uppercase tracking-wider">
                   Status
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-3 md:px-6 py-2 md:py-3 text-left text-xs md:text-sm font-medium text-gray-500 uppercase tracking-wider">
                   Actions
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-200">
+            <tbody className="bg-white divide-y divide-gray-200">
               {tasks.map((task) => (
                 <tr key={task.id}>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                  <td className="px-3 md:px-6 py-3 md:py-4 whitespace-nowrap text-xs md:text-sm font-medium text-gray-900">
                     {task.title}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <td className="px-3 md:px-6 py-3 md:py-4 whitespace-nowrap text-xs md:text-sm text-gray-500">
                     {task.assignee}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <td className="px-3 md:px-6 py-3 md:py-4 whitespace-nowrap text-xs md:text-sm text-gray-500">
                     {task.dueDate}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
+                  <td className="px-3 md:px-6 py-3 md:py-4 whitespace-nowrap">
                     <select
                       value={task.status}
                       onChange={(e) => handleStatusChange(task.id, e.target.value)}
@@ -806,15 +871,15 @@ const TaskManagement = () => {
                       <option value="Completed">Completed</option>
                     </select>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    <button className="text-blue-600 hover:text-blue-900 mr-3">
-                      <Edit className="h-4 w-4" />
+                  <td className="px-3 md:px-6 py-3 md:py-4 whitespace-nowrap text-xs md:text-sm text-gray-500">
+                    <button className="text-blue-600 hover:text-blue-900 mr-2 md:mr-3">
+                      <Edit className="h-3 md:h-4 w-3 md:w-4" />
                     </button>
                     <button 
                       className="text-red-600 hover:text-red-900"
                       onClick={() => handleDeleteTask(task.id)}
                     >
-                      <Trash2 className="h-4 w-4" />
+                      <Trash2 className="h-3 md:h-4 w-3 md:w-4" />
                     </button>
                   </td>
                 </tr>
@@ -853,37 +918,37 @@ const DepartmentManagement = () => {
 
   return (
     <div className="bg-white rounded-lg shadow">
-      <div className="p-6">
-        <div className="flex justify-between items-center mb-6">
+      <div className="p-4 md:p-6">
+        <div className="flex flex-col md:flex-row md:justify-between md:items-center mb-4 md:mb-6 gap-4">
           <h2 className="text-xl font-semibold">Department Management</h2>
           <button
             onClick={() => setShowAddDepartment(true)}
-            className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 flex items-center"
+            className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 flex items-center justify-center"
           >
             <Plus className="h-4 w-4 mr-1" />
-            Add Department
+            <span className="text-sm md:text-base">Add Department</span>
           </button>
         </div>
 
         {showAddDepartment && (
-          <div className="mb-6 p-4 border rounded-lg">
-            <h3 className="text-lg font-medium mb-4">Add New Department</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+          <div className="mb-4 md:mb-6 p-3 md:p-4 border rounded-lg">
+            <h3 className="text-base md:text-lg font-medium mb-3 md:mb-4">Add New Department</h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4 mb-3 md:mb-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Name</label>
+                <label className="block text-xs md:text-sm font-medium text-gray-700 mb-1">Name</label>
                 <input
                   type="text"
                   value={newDepartment.name}
                   onChange={(e) => setNewDepartment({...newDepartment, name: e.target.value})}
-                  className="w-full p-2 border rounded-md"
+                  className="w-full p-2 text-sm md:text-base border rounded-md"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Manager</label>
+                <label className="block text-xs md:text-sm font-medium text-gray-700 mb-1">Manager</label>
                 <select
                   value={newDepartment.manager}
                   onChange={(e) => setNewDepartment({...newDepartment, manager: e.target.value})}
-                  className="w-full p-2 border rounded-md"
+                  className="w-full p-2 text-sm md:text-base border rounded-md"
                 >
                   <option value="">Select Manager</option>
                   {usersData.filter(user => user.role === 'Manager' || user.role === 'Admin').map(user => (
@@ -892,25 +957,25 @@ const DepartmentManagement = () => {
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Employees</label>
+                <label className="block text-xs md:text-sm font-medium text-gray-700 mb-1">Employees</label>
                 <input
                   type="number"
                   value={newDepartment.employees}
                   onChange={(e) => setNewDepartment({...newDepartment, employees: e.target.value})}
-                  className="w-full p-2 border rounded-md"
+                  className="w-full p-2 text-sm md:text-base border rounded-md"
                 />
               </div>
             </div>
             <div className="flex justify-end space-x-2">
               <button
                 onClick={() => setShowAddDepartment(false)}
-                className="px-4 py-2 border rounded-md hover:bg-gray-100"
+                className="px-3 md:px-4 py-1 md:py-2 text-sm md:text-base border rounded-md hover:bg-gray-100"
               >
                 Cancel
               </button>
               <button
                 onClick={handleAddDepartment}
-                className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
+                className="bg-blue-600 text-white px-3 md:px-4 py-1 md:py-2 text-sm md:text-base rounded-md hover:bg-blue-700"
                 disabled={!newDepartment.name || !newDepartment.manager || !newDepartment.employees}
               >
                 Save Department
@@ -921,43 +986,43 @@ const DepartmentManagement = () => {
 
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">
-            <thead>
+            <thead className="bg-gray-50">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-3 md:px-6 py-2 md:py-3 text-left text-xs md:text-sm font-medium text-gray-500 uppercase tracking-wider">
                   Name
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-3 md:px-6 py-2 md:py-3 text-left text-xs md:text-sm font-medium text-gray-500 uppercase tracking-wider">
                   Manager
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-3 md:px-6 py-2 md:py-3 text-left text-xs md:text-sm font-medium text-gray-500 uppercase tracking-wider">
                   Employees
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-3 md:px-6 py-2 md:py-3 text-left text-xs md:text-sm font-medium text-gray-500 uppercase tracking-wider">
                   Actions
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-200">
+            <tbody className="bg-white divide-y divide-gray-200">
               {departments.map((dept) => (
                 <tr key={dept.id}>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                  <td className="px-3 md:px-6 py-3 md:py-4 whitespace-nowrap text-xs md:text-sm font-medium text-gray-900">
                     {dept.name}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <td className="px-3 md:px-6 py-3 md:py-4 whitespace-nowrap text-xs md:text-sm text-gray-500">
                     {dept.manager}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <td className="px-3 md:px-6 py-3 md:py-4 whitespace-nowrap text-xs md:text-sm text-gray-500">
                     {dept.employees}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    <button className="text-blue-600 hover:text-blue-900 mr-3">
-                      <Edit className="h-4 w-4" />
+                  <td className="px-3 md:px-6 py-3 md:py-4 whitespace-nowrap text-xs md:text-sm text-gray-500">
+                    <button className="text-blue-600 hover:text-blue-900 mr-2 md:mr-3">
+                      <Edit className="h-3 md:h-4 w-3 md:w-4" />
                     </button>
                     <button 
                       className="text-red-600 hover:text-red-900"
                       onClick={() => handleDeleteDepartment(dept.id)}
                     >
-                      <Trash2 className="h-4 w-4" />
+                      <Trash2 className="h-3 md:h-4 w-3 md:w-4" />
                     </button>
                   </td>
                 </tr>
@@ -989,11 +1054,11 @@ const SettingsPage = () => {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow p-6">
+    <div className="bg-white rounded-lg shadow p-4 md:p-6">
       <h2 className="text-xl font-semibold mb-6">Settings</h2>
       <div className="space-y-6">
         <div>
-          <h3 className="text-lg font-medium mb-4">General Settings</h3>
+          <h3 className="text-base md:text-lg font-medium mb-4">General Settings</h3>
           <div className="space-y-4">
             <div className="flex items-center">
               <input
@@ -1004,12 +1069,12 @@ const SettingsPage = () => {
                 onChange={handleChange}
                 className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
               />
-              <label htmlFor="darkMode" className="ml-2 text-gray-700">
+              <label htmlFor="darkMode" className="ml-2 text-sm md:text-base text-gray-700">
                 Dark Mode
               </label>
             </div>
             <div>
-              <label htmlFor="timezone" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="timezone" className="block text-xs md:text-sm font-medium text-gray-700 mb-1">
                 Timezone
               </label>
               <select
@@ -1017,7 +1082,7 @@ const SettingsPage = () => {
                 name="timezone"
                 value={settings.timezone}
                 onChange={handleChange}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                className="mt-1 block w-full p-2 text-sm md:text-base border rounded-md focus:border-blue-500 focus:ring-blue-500"
               >
                 <option value="Asia/Kolkata">India (Asia/Kolkata)</option>
                 <option value="America/New_York">Eastern Time (America/New_York)</option>
@@ -1025,7 +1090,7 @@ const SettingsPage = () => {
               </select>
             </div>
             <div>
-              <label htmlFor="language" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="language" className="block text-xs md:text-sm font-medium text-gray-700 mb-1">
                 Language
               </label>
               <select
@@ -1033,7 +1098,7 @@ const SettingsPage = () => {
                 name="language"
                 value={settings.language}
                 onChange={handleChange}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                className="mt-1 block w-full p-2 text-sm md:text-base border rounded-md focus:border-blue-500 focus:ring-blue-500"
               >
                 <option value="en">English</option>
                 <option value="hi">Hindi</option>
@@ -1044,7 +1109,7 @@ const SettingsPage = () => {
         </div>
 
         <div>
-          <h3 className="text-lg font-medium mb-4">Notification Settings</h3>
+          <h3 className="text-base md:text-lg font-medium mb-4">Notification Settings</h3>
           <div className="space-y-2">
             <div className="flex items-center">
               <input
@@ -1055,7 +1120,7 @@ const SettingsPage = () => {
                 onChange={handleChange}
                 className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
               />
-              <label htmlFor="notifications" className="ml-2 text-gray-700">
+              <label htmlFor="notifications" className="ml-2 text-sm md:text-base text-gray-700">
                 Enable Notifications
               </label>
             </div>
@@ -1065,7 +1130,7 @@ const SettingsPage = () => {
         <div className="pt-4">
           <button
             type="button"
-            className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
+            className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 text-sm md:text-base"
           >
             Save Settings
           </button>
