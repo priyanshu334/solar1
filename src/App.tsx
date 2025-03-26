@@ -8,6 +8,7 @@ import CustomerPortal from './pages/CustomerPortal';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import ProductsPage from './pages/ProductPage';
+import NotificationsPage from './pages/NotificationsPage';
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
             <Route path="/admin/*" element={<AdminPanel />} />
             <Route path='/store' element={<ProductsPage/>} />
             <Route path="/portal/*" element={<CustomerPortal />} />
+            <Route path='/notify/*' element={<NotificationsPage />} />
           </Routes>
         </main>
         <Footer />

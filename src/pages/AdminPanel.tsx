@@ -175,7 +175,7 @@ const AdminPanel = () => {
           <div className="mb-6 md:mb-8 flex justify-between items-center">
             <h1 className="text-xl md:text-2xl font-bold text-gray-800">Admin Dashboard</h1>
             <div className="relative">
-              <Bell className="h-6 w-6 text-gray-600 cursor-pointer" />
+             <a href='/notify'> <Bell className="h-6 w-6 text-gray-600 cursor-pointer" /></a>
               <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center">
                 {notifications.length}
               </span>
