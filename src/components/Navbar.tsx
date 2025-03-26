@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Sun, Menu, X } from 'lucide-react';
 
-const Navbar = () => {
+const Navbar: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
 
   return (
@@ -26,6 +26,9 @@ const Navbar = () => {
             </Link>
             <Link to="/admin" className="text-gray-700 hover:text-green-600 px-3 py-2 rounded-md">
               Admin Panel
+            </Link>
+            <Link to="/store" className="text-gray-700 hover:text-green-600 px-3 py-2 rounded-md">
+              Ecom Store
             </Link>
             <button className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700">
               Get Started
@@ -68,6 +71,13 @@ const Navbar = () => {
               onClick={() => setIsMenuOpen(false)}
             >
               Admin Panel
+            </Link>
+            <Link
+              to="/store"
+              className="block text-gray-700 hover:text-green-600 px-3 py-2 rounded-md"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              Ecom Store
             </Link>
             <button className="w-full text-left bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700">
               Get Started
